@@ -1,12 +1,18 @@
-grammar cppGrammar;
+grammar CPPGrammar;
 
-program: (description program) | ;
+@members {
+int count = 0;
+}
 
-description: varDeclaration | class | main;
+program: (description program) | EOF;
 
-class: CLASS ident LEFT_BRACE innerClass RIGHT_BRACE SEMICOLON |;
+description: varDeclaration | classOp | main;
 
-innerClass: varDeclaration innerClass |;
+classOp: CLASS className LEFT_BRACE innerClass RIGHT_BRACE SEMICOLON;
+
+className: ident;
+
+innerClass: varDeclaration SEMICOLON innerClass |;
 
 main: INT MAIN LEFT_ROUND RIGHT_ROUND LEFT_BRACE opsAndVars RIGHT_BRACE;
 
@@ -20,13 +26,11 @@ emptyOperator: SEMICOLON;
 
 compoundOperator: LEFT_BRACE opsAndVars RIGHT_BRACE;
 
-simpleOperator: if | expression;
+simpleOperator: ifOp | expression;
 
-if: IF LEFT_ROUND expression RIGHT_ROUND operator else;
+ifOp: IF LEFT_ROUND expression RIGHT_ROUND operator elseOp;
 
-else: ELSE operator | ;
-
-assign: object ASSIGN a1;
+elseOp: ELSE operator | ;
 
 a0: object ASSIGN a1 | a1;
 
@@ -62,11 +66,11 @@ object: ident arrayOrClass;
 
 arrayOrClass: (array field arrayOrClass) | ;
 
-array: (LEFT_SQUARE expression RIGHT_SQUARE) | ;
+array: (LEFT_SQUARE expression RIGHT_SQUARE);
 
-field: (DOT ident) | ;
+field: (DOT ident) | WHITESPACE;
 
-ident: LETTERS+ ;
+ident: ID ;
 
 constant: CONSTANT;
 
@@ -93,8 +97,8 @@ CHAR: 'char';
 
 MAIN: 'main';
 
-IF: 'if';
-ELSE: 'else';
+IF: 'ifOp';
+ELSE: 'elseOp';
 
 ASSIGN: '=';
 MINUS: '-';
@@ -111,4 +115,6 @@ MUL: '*';
 DIV: '/';
 MOD: '%';
 
-fragment LETTERS: [a-zA-Z]+ ;
+ID: MYLETTERS;
+
+fragment MYLETTERS: [a-zA-Z]+ ;
