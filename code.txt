@@ -1,16 +1,30 @@
-class abc {
+class ABC {
     int a, b, c;
+    char d[100];
 };
 
 int main() {
-    int ff;
-    int a = 1, b = 10;
-    int c = a + b;
-    int d = 1 + a + b + c;
-    if (a > b) {
-        c = 10;
-    } else {
-        c = -10;
+
+    int a, b, c;
+    if (c < b) {
+        a = 5 >> 7;
+        if (a > b) {
+            a = 6;
+            if (b < 10) {
+                b = 22;
+            } else {
+                c = 15;
+            }
+        } else {
+            b = a;
+        }
     }
-    return 0;
+    else {
+        c = 6 << 8;
+    }
+    if (a * 5)
+        ((((((b >> 8))))));
+
+    ABC abc;
+    abc.a = 90 << 8 >> c;
 }

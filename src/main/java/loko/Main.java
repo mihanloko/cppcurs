@@ -20,8 +20,12 @@ public class Main {
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         CPPGrammarParser parser = new CPPGrammarParser(tokens);
         ParseTree tree = parser.program();
+        parser.ll.outTriads();
+        parser.ll.optimize();
+        System.out.println("optimized");
+        parser.ll.outTriads();
 //        walk(tree);
-        new MyLogic().visit(tree);
+//        new MyLogic().visit(tree);
 //        System.out.println(tree.toStringTree(parser));
     }
 
