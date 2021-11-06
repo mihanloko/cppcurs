@@ -16,13 +16,13 @@ classOp: CLASS className {ll.setClass($className.text);} LEFT_BRACE innerClass R
 
 className: ident;
 
-innerClass: varDeclaration SEMICOLON innerClass |;
+innerClass: varDeclaration innerClass |;
 
 main: INT MAIN LEFT_ROUND RIGHT_ROUND {ll.startMain();} {ll.genProc();} LEFT_BRACE opsAndVars RIGHT_BRACE {ll.back();} {ll.genEndp();};
 
 opsAndVars: (varDeclaration opsAndVars) | (operator opsAndVars) | ;
 
-type: INT {ll.saveType("int");} | CHAR {ll.saveType("char");}  | ident {ll.checkType($ident.text);} {ll.saveType($ident.text);} ;
+type: (INT {ll.saveType("int");}) | (CHAR {ll.saveType("char");}) | (ident {ll.checkType($ident.text);} {ll.saveType($ident.text);}) ;
 
 operator: simpleOperator | compoundOperator | emptyOperator;
 
@@ -30,7 +30,7 @@ emptyOperator: SEMICOLON;
 
 compoundOperator: {ll.dnew();} LEFT_BRACE opsAndVars RIGHT_BRACE {ll.back();};
 
-simpleOperator: ifOp | expression;
+simpleOperator: ifOp | (expression SEMICOLON);
 
 ifOp: IF LEFT_ROUND expression RIGHT_ROUND {ll.genIf();} {ll.genSetTrueAddr();} {ll.checkCondition();} operator {ll.genGoto();} elseOp;
 
@@ -54,7 +54,7 @@ a55: MOD a5 {ll.match5();} {ll.genMod();} | DIV a5 {ll.match5();} {ll.genDiv();}
 
 expression: a0;
 
-varDeclaration: type varList;
+varDeclaration: type varList SEMICOLON;
 
 varList: var varDop;
 
@@ -70,9 +70,9 @@ object: ident {ll.genPush($ident.text);} {ll.find($ident.text);} {ll.push($ident
 
 arrayOrClass: (array field arrayOrClass) | ;
 
-array:  LEFT_SQUARE {ll.checkArray();} expression {ll.genIdx();} {ll.matchConst();} RIGHT_SQUARE;
+array: (LEFT_SQUARE {ll.checkArray();} expression {ll.genIdx();} {ll.matchConst();} RIGHT_SQUARE) | ;
 
-field:  DOT ident {ll.genPush($ident.text);} {ll.findField();} {ll.push($ident.text);} {ll.genDot();} | WHITESPACE;
+field: (DOT ident {ll.genPush($ident.text);} {ll.push($ident.text);} {ll.findField();}  {ll.genDot();}) | WHITESPACE;
 
 ident: ID ;
 
@@ -101,8 +101,8 @@ CHAR: 'char';
 
 MAIN: 'main';
 
-IF: 'ifOp';
-ELSE: 'elseOp';
+IF: 'if';
+ELSE: 'else';
 
 ASSIGN: '=';
 MINUS: '-';

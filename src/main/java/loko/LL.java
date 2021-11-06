@@ -221,13 +221,14 @@ public class LL {
     }
 
     public void makeArray() {
-        lastType.makeVarArray();
+        if (Tree.flagInterpret)
+            lastType.makeVarArray();
     }
 
     public void find(String lastLex) {
         lastType = Tree.cur.FindUp(lastLex);
-        if (lastType == null) {
-            scanner.printSemError("Идентификатор " + lastLex + " не объявлен", lastLex.length());
+        if (Tree.flagInterpret && lastType == null) {
+            scanner.printSemError("Идентификатор " + lastLex + " не объявлен", 0);
         }
     }
 
@@ -253,7 +254,9 @@ public class LL {
     }
 
     public void findField() {
-        lastType = lastType.findFiled(lastType, lastLex);
+        if (Tree.flagInterpret) {
+            lastType = lastType.findFiled(lastType, lastLex);
+        }
     }
 
     public void genDot() {
@@ -261,6 +264,9 @@ public class LL {
     }
 
     void checkAssignCast(Tree first, Tree second) {
+        if (!Tree.flagInterpret) {
+            return;
+        }
         if (first.getNode().typeName != second.getNode().typeName) {
             if (second.getNode().typeName == ObjChar && first.getNode().typeName == ObjInt) {
                 triads.add(new Triad(TRI_INT_CHAR, operands.get(operands.size() - 1), null));
@@ -275,6 +281,9 @@ public class LL {
     }
 
     void checkCast(Tree first, Tree second) {
+        if (!Tree.flagInterpret) {
+            return;
+        }
         if (first.getNode().typeName != second.getNode().typeName) {
             if (first.getNode().typeName == ObjChar) {
                 triads.add(new Triad(TRI_CHAR_INT, operands.get(operands.size() - 1), null));
@@ -443,7 +452,7 @@ public class LL {
             return false;
         }
         try {
-            double d = Double.parseDouble(strNum);
+            Double.parseDouble(strNum);
         } catch (NumberFormatException nfe) {
             return false;
         }

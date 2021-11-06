@@ -1,5 +1,7 @@
 package loko;
 
+import java.util.Objects;
+
 import static java.lang.System.exit;
 import static loko.Type.*;
 import static loko.TypeName.*;
@@ -10,7 +12,7 @@ public class Tree {
     private Tree right;
     private Tree parent;
     private Node node;
-    private static boolean flagInterpret = true;
+    public static boolean flagInterpret = false;
     private Scanner scanner = new Scanner();
 
 
@@ -46,7 +48,7 @@ public class Tree {
     Tree FindUp(Tree From, String id) {
         if (!flagInterpret) return null;
         Tree cur = From;
-        while (cur != null && (cur.node.lex != id)) {
+        while (cur != null && (!Objects.equals(cur.node.lex, id))) {
             cur = cur.parent;
         }
         return cur;
