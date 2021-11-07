@@ -13,9 +13,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         String str = Main.readFile("code.txt");
-//        System.out.println(str);
         CPPGrammarLexer lexer = new CPPGrammarLexer(CharStreams.fromString(str));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         CPPGrammarParser parser = new CPPGrammarParser(tokens);
@@ -24,9 +23,6 @@ public class Main {
         parser.ll.optimize();
         System.out.println("optimized");
         parser.ll.outTriads();
-//        walk(tree);
-//        new MyLogic().visit(tree);
-//        System.out.println(tree.toStringTree(parser));
     }
 
     private static String readFile(String path) {
@@ -35,16 +31,6 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
             return "";
-        }
-    }
-
-    private static void walk(ParseTree tree) {
-        System.out.println("node text: " + tree.getText());
-        for (int i = 0; i < tree.getChildCount(); i++) {
-            System.out.println("node child " + i + " text: " + tree.getChild(i).getText());
-        }
-        for (int i = 0; i < tree.getChildCount(); i++) {
-            walk(tree.getChild(i));
         }
     }
 }
