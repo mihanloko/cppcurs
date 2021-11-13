@@ -388,6 +388,62 @@ public class LL {
                 i = 0;
             }
         }
+
+        for (int i = 0; i < triads.size(); i++) {
+            if (triads.get(i) == null) {
+                continue;
+            }
+            tryOptimizeFunction(triads.get(i), i);
+        }
+
+    }
+
+    void tryOptimizeFunction (Triad triad, int idx) {
+        if (triad.operation != TRI_CALL) {
+            return;
+        }
+        String name = triad.getOperand1().value.node.lex;
+        if (!checkFunctionForRecurcive(name)) {
+            return;
+        }
+        List<Triad> triadsToInsert = new ArrayList<>();
+        boolean insert = false;
+        for (Triad tri: triads) {
+            if (tri == null) {
+                continue;
+            }
+            if (tri.operation == TRI_PROC && tri.operand1.value.node.lex.equals(name)) {
+                insert = true;
+                continue;
+            }
+            if (tri.operation == TRI_ENDP && tri.operand1.value.node.lex.equals(name)) {
+                break;
+            }
+            if (insert) {
+                triadsToInsert.add(tri.copy());
+            }
+        }
+        triads.remove(idx);
+        triads.addAll(triadsToInsert);
+    }
+
+    boolean checkFunctionForRecurcive(String name) {
+        boolean check = false;
+        for (Triad triad : triads) {
+            if (triad == null) {
+                continue;
+            }
+            if (triad.operation == TRI_PROC && Objects.equals(triad.operand1.value.node.lex, name)) {
+                check = true;
+            }
+            if (triad.operation == TRI_ENDP && Objects.equals(triad.operand1.value.node.lex, name)) {
+                break;
+            }
+            if (check && triad.operation == TRI_CALL && Objects.equals(triad.operand1.value.node.lex, name)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     Operand tryOptimizeConst(Triad triad) {

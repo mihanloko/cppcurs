@@ -8,6 +8,10 @@ public class Operand {
     OperandType type = EMPTY;
     OperandValue value;
 
+    private Operand() {
+
+    }
+
     public Operand(String operand) {
         this(new Node(operand));
     }
@@ -37,5 +41,19 @@ public class Operand {
     @Override
     public int hashCode() {
         return Objects.hash(type, value);
+    }
+
+    public Operand copy() {
+        Operand clone = new Operand();
+        clone.type = type;
+        if (type == ADDRESS) {
+            clone.value = new OperandValue();
+            clone.value.address = value.address;
+        } else if (type == NODE) {
+            clone.value.node = new Node(value.node.lex);
+        } else {
+            clone.value = value;
+        }
+        return clone;
     }
 }

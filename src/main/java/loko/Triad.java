@@ -33,4 +33,19 @@ public class Triad {
     public Operand getOperand2() {
         return operand2;
     }
+
+    public Triad copy() {
+        Operand copy1, copy2;
+        if (operand1 != null) {
+            copy1 = operand1.copy();
+        } else {
+            copy1 = null;
+        }
+        if (operand2 != null) {
+            copy2 = operand2.copy();
+        } else {
+            copy2 = null;
+        }
+        return new Triad(operation, copy1, copy2);
+    }
 }
