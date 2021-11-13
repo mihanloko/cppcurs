@@ -10,7 +10,7 @@ public LL ll = new LL();
 
 program: (description program) | EOF;
 
-description: varDeclaration | classOp | main;
+description: varDeclaration | classOp | main | function;
 
 classOp: CLASS className {ll.setClass($className.text);} LEFT_BRACE innerClass RIGHT_BRACE SEMICOLON {ll.back();};
 
@@ -18,7 +18,9 @@ className: ident;
 
 innerClass: varDeclaration innerClass |;
 
-main: INT MAIN LEFT_ROUND RIGHT_ROUND {ll.startMain();} {ll.genProc();} LEFT_BRACE opsAndVars RIGHT_BRACE {ll.back();} {ll.genEndp();};
+function: type ident LEFT_ROUND RIGHT_ROUND {ll.startFunc($ident.text);} {ll.genProc($ident.text);} LEFT_BRACE opsAndVars returnOp RIGHT_BRACE {ll.back();} {ll.genEndp($ident.text);};
+
+main: INT MAIN LEFT_ROUND RIGHT_ROUND {ll.startMain();} {ll.genProc("main");} LEFT_BRACE opsAndVars returnOp RIGHT_BRACE {ll.back();} {ll.genEndp("main");};
 
 opsAndVars: (varDeclaration opsAndVars) | (operator opsAndVars) | ;
 
@@ -44,13 +46,15 @@ a3: a4 a33;
 a4: a5 a44;
 a5: a6 a55;
 a6: MINUS a7 | PLUS a7 | a7;
-a7: object | constant {ll.pushConst();} {ll.genPush($constant.text);} | (LEFT_ROUND a1 RIGHT_ROUND);
+a7: object | (constant {ll.pushConst();} {ll.genPush($constant.text);}) | (LEFT_ROUND a1 RIGHT_ROUND) | (functionCall);
 
 a11: EQUAL a1 {ll.match1();} {ll.genEqual();} | NOT_EQUAL a1 {ll.match1();} {ll.genNotEqual();} | ;
 a22: LESS a2 {ll.match2();} {ll.genLess();} | GREATER a2 {ll.match2();} {ll.genGreater();} | LE a2 {ll.match2();} {ll.genLe();} | GE a2 {ll.match2();} {ll.genGe();} |;
 a33: LEFT_SHIFT a3 {ll.match3();} {ll.genLeftShift();} | RIGHT_SHIFT a3 {ll.match3();} {ll.genRightShift();} | ;
 a44: PLUS a4 {ll.match4();} {ll.genPlus();} | MINUS a4 {ll.match4();} {ll.genMinus();} | ;
 a55: MOD a5 {ll.match5();} {ll.genMod();} | DIV a5 {ll.match5();} {ll.genDiv();} | MUL a5 {ll.match5();} {ll.genMul();} |;
+
+functionCall: ident {ll.checkFunc($ident.text);} LEFT_ROUND RIGHT_ROUND {ll.callFunc($ident.text);};
 
 expression: a0;
 
@@ -77,6 +81,8 @@ field: (DOT ident {ll.genPush($ident.text);} {ll.push($ident.text);} {ll.findFie
 ident: ID ;
 
 constant: CONSTANT;
+
+returnOp: RETURN_WORD expression {ll.genMov();} SEMICOLON;
 
 CONSTANT: [0-9]+;
 
@@ -120,5 +126,7 @@ DIV: '/';
 MOD: '%';
 
 ID: MYLETTERS;
+
+RETURN_WORD: 'return ';
 
 fragment MYLETTERS: [a-zA-Z]+ ;

@@ -1,3 +1,10 @@
+int test() {
+    int a, b;
+    a = 5;
+    b = 9;
+    return a * b;
+}
+
 int main() {
        int a, b, c, d;
        a = a >> b >> (3 * 4) >> c >> d;
@@ -5,4 +12,5 @@ int main() {
        b = a >> b >> (3 * 4) >> c >> d;
        c = a >> b >> (3 * 4) >> c >> d;
        d = a >> b >> (3 * 4) >> c >> d;
+       return test();
 }

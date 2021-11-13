@@ -64,12 +64,12 @@ public class LL {
         Tree.cur.openBlock("", ObjFictive);
     }
 
-    public void genProc() {
-        triads.add(new Triad(TRI_PROC, new Operand("main"), null));
+    public void genProc(String name) {
+        triads.add(new Triad(TRI_PROC, new Operand(name), null));
     }
 
-    public void genEndp() {
-        triads.add(new Triad(TRI_ENDP, new Operand("main"), null));
+    public void genEndp(String name) {
+        triads.add(new Triad(TRI_ENDP, new Operand(name), null));
     }
 
     public void genIf() {
@@ -261,6 +261,30 @@ public class LL {
 
     public void genDot() {
         generateArithmeticTriad(TRI_DOT);
+    }
+
+    public void startFunc(String name) {
+        Tree.cur.openBlock(name, ObjFunc);
+    }
+
+    public void genMov() {
+        triads.add(new Triad(TRI_MOV, new Operand("eax"), getOperand()));
+        operands.add(new Operand(getLastTriadAddr()));
+        triads.add(new Triad(TRI_RET));
+    }
+
+    public void checkFunc(String lastLex) {
+        lastType = Tree.cur.FindUp(lastLex);
+        if (Tree.flagInterpret && (lastType == null || lastType.getNode().type != ObjFunc)) {
+            scanner.printSemError("Функция " + lastLex + " не объявлена", 0);
+        }
+    }
+
+    public void callFunc(String name) {
+        Operand operand = new Operand(name);
+        operand.value.node.type = ObjFunc;
+        triads.add(new Triad(TRI_CALL, operand, null));
+        operands.add(new Operand(getLastTriadAddr()));
     }
 
     void checkAssignCast(Tree first, Tree second) {
@@ -553,6 +577,17 @@ public class LL {
             case TRI_CHAR_INT:
                 str = "ch->i";
                 break;
+            case TRI_CALL:
+                str = "call";
+                break;
+            case TRI_MOV:
+                str = "mov";
+                break;
+            case TRI_RET:
+                str = "ret";
+                break;
+            default:
+                str = "unknown";
         }
         return str;
     }
@@ -565,5 +600,4 @@ public class LL {
         else if (operand.type == NODE)
             System.out.print(operand.value.node.lex);
     }
-
 }

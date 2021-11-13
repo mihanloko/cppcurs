@@ -7,5 +7,6 @@ public enum Type {
     ObjStructDefinition, // тип структуры
     ObjMain, // функция main, должна быть единственной
     ObjFictive,
+    ObjFunc,
     ObjUnknown
 }

@@ -23,6 +23,9 @@ public enum Tri {
     TRI_MOD,
     TRI_MUL,
     TRI_IDX,
-    TRI_DOT
+    TRI_DOT,
+    TRI_CALL,
+    TRI_MOV,
+    TRI_RET
     ;
 }
