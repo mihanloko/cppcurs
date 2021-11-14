@@ -3,6 +3,7 @@ package loko;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 import static java.lang.System.exit;
 import static loko.OperandType.*;
@@ -417,14 +418,53 @@ public class LL {
                 continue;
             }
             if (tri.operation == TRI_ENDP && tri.operand1.value.node.lex.equals(name)) {
+                triadsToInsert.remove(triadsToInsert.size() - 1);
                 break;
             }
             if (insert) {
                 triadsToInsert.add(tri.copy());
             }
         }
+        String randomStr = "@" + new Random(System.currentTimeMillis()).nextInt(1000);
+        for (Triad tri: triadsToInsert) {
+            updateOperand(tri.operand1, randomStr, idx);
+            updateOperand(tri.operand2, randomStr, idx);
+        }
+        for (int i = idx + 1; i < triads.size(); i++) {
+            if (triads.get(i) != null) {
+                updateOperand(triads.get(i).operand1, "", triadsToInsert.size());
+                updateOperand(triads.get(i).operand2, "", triadsToInsert.size());
+            }
+        }
+        int returnIdx = triadsToInsert.get(triadsToInsert.size() - 1).operand2.value.address;
+        triadsToInsert.remove(triadsToInsert.size() - 1);
+        for (int i = idx + 1; i < triads.size(); i++) {
+            if (triads.get(i) != null) {
+                if (triads.get(i).operand1 != null &&
+                    triads.get(i).operand1.type == ADDRESS &&
+                    triads.get(i).operand1.value.address == idx) {
+                    triads.get(i).operand1.value.address = returnIdx;
+                }
+                if (triads.get(i).operand2 != null &&
+                    triads.get(i).operand2.type == ADDRESS &&
+                    triads.get(i).operand2.value.address == idx) {
+                    triads.get(i).operand2.value.address = returnIdx;
+                }
+            }
+        }
         triads.remove(idx);
-        triads.addAll(triadsToInsert);
+        triads.addAll(idx, triadsToInsert);
+    }
+
+    private void updateOperand(Operand operand, String randomStr, int idx) {
+        if (operand == null || (operand.type == NODE && isNumeric(operand.value.node.lex))) {
+            return;
+        }
+        if (operand.type == NODE && !Objects.equals(operand.value.node.lex, "eax")) {
+            operand.value.node.lex = operand.value.node.lex + randomStr;
+        } else {
+            operand.value.address += idx - 2;
+        }
     }
 
     boolean checkFunctionForRecurcive(String name) {
@@ -551,7 +591,7 @@ public class LL {
             outOneTriad(triads.get(i));
             System.out.println();
         }
-        System.out.println( "skipped " + skipped );
+//        System.out.println( "skipped " + skipped );
     }
 
     void outOneTriad(Triad triad) {

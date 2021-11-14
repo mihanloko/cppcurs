@@ -6,11 +6,8 @@ int test() {
 }
 
 int main() {
-       int a, b, c, d;
-       a = a >> b >> (3 * 4) >> c >> d;
-       a >> b >> (3 * 4) >> c >> d;
-       b = a >> b >> (3 * 4) >> c >> d;
-       c = a >> b >> (3 * 4) >> c >> d;
-       d = a >> b >> (3 * 4) >> c >> d;
-       return test();
+       int a, b;
+       b = 7 * 5;
+       a = 6 * b;
+       return a * test();
 }

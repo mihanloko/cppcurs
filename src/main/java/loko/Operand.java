@@ -50,6 +50,7 @@ public class Operand {
             clone.value = new OperandValue();
             clone.value.address = value.address;
         } else if (type == NODE) {
+            clone.value = new OperandValue();
             clone.value.node = new Node(value.node.lex);
         } else {
             clone.value = value;
